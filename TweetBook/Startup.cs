@@ -1,18 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.EntityFrameworkCore;
-using TweetBook.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
+using TweetBook.Installers;
 using TweetBook.Options;
 
 namespace TweetBook
@@ -24,21 +15,12 @@ namespace TweetBook
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        private IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<DataContext>(options =>
-                options.UseSqlite(
-                    Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDatabaseDeveloperPageExceptionFilter();
-
-            services.AddDefaultIdentity<IdentityUser>(/*options => options.SignIn.RequireConfirmedAccount = true*/)
-                .AddEntityFrameworkStores<DataContext>();
-            services.AddControllersWithViews();
-
-            services.AddSwaggerGen(x => x.SwaggerDoc("v1", new OpenApiInfo {Title = "Tweetbook API", Version = "v1"}));
+            services.InstallServicesFromAssembly(Configuration, typeof(Startup));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
