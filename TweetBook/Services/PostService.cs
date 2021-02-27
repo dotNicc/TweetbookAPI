@@ -32,10 +32,25 @@ namespace TweetBook.Services
             return this.posts.SingleOrDefault(x => x.Id == postId);
         }
 
-        public void Create(Post post)
+        public Post Create(Guid postId)
         {
-            if (post != null)
-                this.posts.Add(post);
+            if (postId == Guid.Empty) 
+                postId = Guid.NewGuid();
+            
+            var post = new Post {Id = postId};
+            this.posts.Add(post);
+
+            return post;
+        }
+
+        public bool UpdatePost(Post postToUpdate)
+        {
+            if (GetPostById(postToUpdate.Id) == null) 
+                return false;
+
+            var index = this.posts.FindIndex(x => x.Id == postToUpdate.Id);
+            this.posts[index] = postToUpdate;
+            return true;
         }
     }
 }

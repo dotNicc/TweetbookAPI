@@ -33,16 +33,26 @@ namespace TweetBook.Controllers.V1
             
             return Ok(post);
         }
+        
+        [HttpPut(ApiRoutes.Posts.Update)]
+        public IActionResult Update([FromRoute]Guid postId, [FromBody] UpdatePostRequest request)
+        {
+            var post = new Post
+            {
+                Id = postId,
+                Name = request.Name
+            };
+
+            if (this.postService.UpdatePost(post))
+                return Ok(post);
+            
+            return NotFound();
+        }
 
         [HttpPost(ApiRoutes.Posts.Create)]
         public IActionResult Create([FromBody] CreatePostRequest postRequest)
         {
-            var post = new Post {Id = postRequest.Id};
-
-            if (post.Id == Guid.Empty) 
-                post.Id = Guid.NewGuid();
-
-            this.postService.Create(post);
+            var post = this.postService.Create(postRequest.Id);
             var location = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}/{ApiRoutes.Posts.Get.Replace("{postId}", post.Id.ToString())}";
 
             var response = new PostResponse() {Id = post.Id};
