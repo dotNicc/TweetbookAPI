@@ -49,7 +49,36 @@ namespace TweetBook.Services
                 };
             }
 
-            var tokenHandler = new JwtSecurityTokenHandler();
+            return GenerateAuthenticationResultForUser(newUser);
+        }
+        
+        public async Task<AuthenticationResult> LoginAsync(string email, string password)
+        {
+            var user = await this.userManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                return new AuthenticationResult
+                {
+                    Errors = new[] {"User does not exist."}
+                };
+            }
+
+            var userHasValidPassword = await this.userManager.CheckPasswordAsync(user, password);
+
+            if (!userHasValidPassword)
+            {
+                return new AuthenticationResult
+                {
+                    Errors = new[] {"Authentication failed."}
+                };
+            }
+
+            return GenerateAuthenticationResultForUser(user);
+        }
+
+        private AuthenticationResult GenerateAuthenticationResultForUser(IdentityUser newUser)
+        {
             var key = Encoding.ASCII.GetBytes(this.jwtSettings.Secret);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -64,6 +93,7 @@ namespace TweetBook.Services
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
+            var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
             return new AuthenticationResult
@@ -72,6 +102,5 @@ namespace TweetBook.Services
                 Token = tokenHandler.WriteToken(token)
             };
         }
-        
     }
 }
