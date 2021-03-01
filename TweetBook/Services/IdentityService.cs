@@ -156,7 +156,6 @@ namespace TweetBook.Services
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var refreshToken = new RefreshToken
             {
-                Token = Guid.NewGuid().ToString(),
                 JwtId = token.Id,
                 UserId = user.Id,
                 CreationDate = DateTime.UtcNow,
