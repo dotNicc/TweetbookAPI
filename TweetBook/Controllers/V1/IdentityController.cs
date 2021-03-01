@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using TweetBook.Contract.V1;
 using TweetBook.Contract.V1.Requests;
 using TweetBook.Contract.V1.Responses;
+using TweetBook.Domain;
 using TweetBook.Services;
 
 namespace TweetBook.Controllers.V1
@@ -28,27 +29,29 @@ namespace TweetBook.Controllers.V1
                 });
             }
             
-            var authResponse = await this.identityService.RegisterAsync(request.Email, request.Password);
+            AuthenticationResult authResponse = await this.identityService.RegisterAsync(request.Email, request.Password);
 
-            if (!authResponse.Success)
-            {
-                return BadRequest(new AuthFailedResponse
-                {
-                    Errors = authResponse.Errors
-                });
-            }
-            
-            return Ok(new AuthSuccessResponse
-            {
-                Token = authResponse.Token
-            });
+            return Reply(authResponse);
         }
-        
+
         [HttpPost(ApiRoutes.Identity.Login)]
         public async Task<IActionResult> Login([FromBody] UserLoginRequest request)
         {
-            var authResponse = await this.identityService.LoginAsync(request.Email, request.Password);
+            AuthenticationResult authResponse = await this.identityService.LoginAsync(request.Email, request.Password);
 
+            return Reply(authResponse);
+        }
+        
+        [HttpPost(ApiRoutes.Identity.Refresh)]
+        public async Task<IActionResult> Login([FromBody] RefreshTokenRequest request)
+        {
+            AuthenticationResult authResponse = await this.identityService.RefreshTokenAsync(request.Token, request.RefreshToken);
+
+            return Reply(authResponse);
+        }
+        
+        private IActionResult Reply(AuthenticationResult authResponse)
+        {
             if (!authResponse.Success)
             {
                 return BadRequest(new AuthFailedResponse
@@ -56,10 +59,11 @@ namespace TweetBook.Controllers.V1
                     Errors = authResponse.Errors
                 });
             }
-            
+
             return Ok(new AuthSuccessResponse
             {
-                Token = authResponse.Token
+                Token = authResponse.Token,
+                RefreshToken = authResponse.RefreshToken
             });
         }
     }
