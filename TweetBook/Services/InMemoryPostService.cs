@@ -5,11 +5,11 @@ using TweetBook.Domain;
 
 namespace TweetBook.Services
 {
-    public class PostService : IPostService
+    public class InMemoryPostService : IPostService
     {
         private readonly List<Post> posts;
 
-        public PostService()
+        public InMemoryPostService()
         {
             this.posts = new List<Post>();
             for (int i = 0; i < 5; i++)
@@ -32,12 +32,17 @@ namespace TweetBook.Services
             return this.posts.SingleOrDefault(x => x.Id == postId);
         }
 
-        public Post Create(Guid postId)
+        public Post Create(Guid postId, string userId)
         {
             if (postId == Guid.Empty) 
                 postId = Guid.NewGuid();
             
-            var post = new Post {Id = postId};
+            var post = new Post
+            {
+                Id = postId,
+                UserId = userId
+            };
+            
             this.posts.Add(post);
 
             return post;
@@ -62,6 +67,13 @@ namespace TweetBook.Services
 
             this.posts.Remove(post);
             return true;
+        }
+
+        public bool UserOwnsPost(Guid postId, string userId)
+        {
+            var post = this.posts.SingleOrDefault(x => x.Id == postId);
+
+            return post != null && post.UserId == userId;
         }
     }
 }

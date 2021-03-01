@@ -6,6 +6,7 @@ using TweetBook.Contract.V1;
 using TweetBook.Contract.V1.Requests;
 using TweetBook.Contract.V1.Responses;
 using TweetBook.Domain;
+using TweetBook.Extensions;
 using TweetBook.Services;
 
 namespace TweetBook.Controllers.V1
@@ -30,7 +31,7 @@ namespace TweetBook.Controllers.V1
         [HttpGet(ApiRoutes.Posts.Get)]
         public IActionResult Get([FromRoute]Guid postId)
         {
-            var post = this.postService.GetPostById(postId);
+            Post post = this.postService.GetPostById(postId);
 
             if (post == null) 
                 return NotFound();
@@ -41,11 +42,15 @@ namespace TweetBook.Controllers.V1
         [HttpPut(ApiRoutes.Posts.Update)]
         public IActionResult Update([FromRoute]Guid postId, [FromBody] UpdatePostRequest request)
         {
-            var post = new Post
+            bool userOwnsPost = this.postService.UserOwnsPost(postId, HttpContext.GetUserIdFromClaim());
+
+            if (!userOwnsPost)
             {
-                Id = postId,
-                Name = request.Name
-            };
+                return BadRequest(new {error = "You do now own this post."});
+            }
+            
+            Post post = this.postService.GetPostById(postId);
+            post.Name = request.Name;
 
             if (this.postService.UpdatePost(post))
                 return Ok(post);
@@ -56,8 +61,8 @@ namespace TweetBook.Controllers.V1
         [HttpPost(ApiRoutes.Posts.Create)]
         public IActionResult Create([FromBody] CreatePostRequest postRequest)
         {
-            var post = this.postService.Create(postRequest.Id);
-            var location = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}/{ApiRoutes.Posts.Get.Replace("{postId}", post.Id.ToString())}";
+            Post post = this.postService.Create(postRequest.Id, HttpContext.GetUserIdFromClaim());
+            string location = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}/{ApiRoutes.Posts.Get.Replace("{postId}", post.Id.ToString())}";
 
             var response = new PostResponse() {Id = post.Id};
             return Created(location, response);
@@ -66,6 +71,13 @@ namespace TweetBook.Controllers.V1
         [HttpDelete(ApiRoutes.Posts.Delete)]
         public IActionResult Delete([FromRoute]Guid postId)
         {
+            bool userOwnsPost = this.postService.UserOwnsPost(postId, HttpContext.GetUserIdFromClaim());
+
+            if (!userOwnsPost)
+            {
+                return BadRequest(new {error = "You do now own this post."});
+            }
+
             bool deleted = this.postService.DeletePost(postId);
             
             if (deleted) 

@@ -77,17 +77,17 @@ namespace TweetBook.Services
             return GenerateAuthenticationResultForUser(user);
         }
 
-        private AuthenticationResult GenerateAuthenticationResultForUser(IdentityUser newUser)
+        private AuthenticationResult GenerateAuthenticationResultForUser(IdentityUser user)
         {
             var key = Encoding.ASCII.GetBytes(this.jwtSettings.Secret);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                    new Claim(JwtRegisteredClaimNames.Sub, newUser.Email),
+                    new Claim(JwtRegisteredClaimNames.Sub, user.Email),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim(JwtRegisteredClaimNames.Email, newUser.Email),
-                    new Claim("id", newUser.Id)
+                    new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                    new Claim("id", user.Id)
                 }),
                 Expires = DateTime.UtcNow.AddHours(2),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
