@@ -61,7 +61,7 @@ namespace TweetBook.Controllers.V1
         [HttpPost(ApiRoutes.Posts.Create)]
         public IActionResult Create([FromBody] CreatePostRequest postRequest)
         {
-            Post post = this.postService.Create(postRequest.Id, HttpContext.GetUserIdFromClaim());
+            Post post = this.postService.Create(postRequest.Id, HttpContext.GetUserIdFromClaim(), postRequest.Name);
             string location = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}/{ApiRoutes.Posts.Get.Replace("{postId}", post.Id.ToString())}";
 
             var response = new PostResponse() {Id = post.Id};

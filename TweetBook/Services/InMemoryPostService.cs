@@ -12,14 +12,6 @@ namespace TweetBook.Services
         public InMemoryPostService()
         {
             this.posts = new List<Post>();
-            for (int i = 0; i < 5; i++)
-            {
-                this.posts.Add(new Post
-                {
-                    Id = Guid.NewGuid(),
-                    Name = $"Post name {i}"
-                });
-            }
         }
         
         public List<Post> GetPosts()
@@ -32,7 +24,7 @@ namespace TweetBook.Services
             return this.posts.SingleOrDefault(x => x.Id == postId);
         }
 
-        public Post Create(Guid postId, string userId)
+        public Post Create(Guid postId, string userId, string name)
         {
             if (postId == Guid.Empty) 
                 postId = Guid.NewGuid();
@@ -40,6 +32,7 @@ namespace TweetBook.Services
             var post = new Post
             {
                 Id = postId,
+                Name = name,
                 UserId = userId
             };
             
