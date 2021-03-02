@@ -20,12 +20,7 @@ namespace TweetBook.IntegrationTests
             
         protected IntegrationTest()
         {
-            var appFactory = new WebApplicationFactory<Startup>();
-
-            this.TestClient = appFactory.CreateClient();
-            this.serviceProvider = appFactory.Services;
-            
-            appFactory.WithWebHostBuilder(builder =>
+            var appFactory = new WebApplicationFactory<Startup>().WithWebHostBuilder(builder =>
             {
                 builder.ConfigureServices(services =>
                 {
@@ -33,6 +28,9 @@ namespace TweetBook.IntegrationTests
                     services.AddDbContext<DataContext>(options => { options.UseInMemoryDatabase("TestDb"); });
                 });
             });
+
+            this.TestClient = appFactory.CreateClient();
+            this.serviceProvider = appFactory.Services;
         }
 
         protected async Task AuthenticateAsync()
