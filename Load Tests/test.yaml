@@ -1,0 +1,27 @@
+# test simple qui simule un login puis un GetAll - pour Artillery.io
+config:
+  target: 'https://localhost:5001'
+  tls:
+    rejectUnauthorized: false
+  phases:
+    - duration: 10
+      arrivalRate: 1
+  defaults:
+    headers:
+      Content-Type: 'application/json'
+
+scenarios:
+  - flow:
+      - post:
+          url: '/api/v1/identity/login'
+          body:  '{"email":"user2@example.com", "password": "MyPass1234!"}'
+          headers:
+            Content-Type: 'application/json'
+          capture:
+            json: '$.token'
+            as: 'token'
+      - get:
+          url: '/api/v1/posts'
+          headers:
+            Authorization: 'Bearer {{ token }}'
+            Content-Type: 'application/json'
