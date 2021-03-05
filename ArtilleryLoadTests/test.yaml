@@ -1,6 +1,6 @@
 # test simple qui simule un login puis un GetAll avec authentification JWT bearer token - pour Artillery.io (à partir avec le Dockerfile)
 config:
-  target: 'https://host.docker.internal:5001'
+  target: 'http://host.docker.internal:5001'
   tls:
     rejectUnauthorized: false
   phases:
@@ -13,7 +13,7 @@ config:
 scenarios:
   - flow:
       - post:
-          url: 'https://host.docker.internal:5001/api/v1/identity/login'
+          url: 'http://host.docker.internal:5001/api/v1/identity/login'
           body:  '{"email":"user2@example.com", "password": "MyPass1234!"}'
           headers:
             Content-Type: 'application/json'
