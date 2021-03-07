@@ -77,5 +77,17 @@ namespace TweetBook.Services
             
             return tags;
         }
+
+        public bool DeleteTag(string tagName)
+        {
+            bool found = false;
+            foreach (var post in this.posts.Where(x => x.Tags.Contains(tagName)))
+            {
+                post.Tags.Remove(tagName);
+                found = true;
+            }
+
+            return found;
+        }
     }
 }

@@ -39,11 +39,10 @@ namespace TweetBook.Services
                     Errors = new[] {"User with this email address already exists"}
                 };
             }
-
-            var newUserId = Guid.NewGuid();
+            
             var newUser = new IdentityUser
             {
-                Id = newUserId.ToString(),
+                Id = Guid.NewGuid().ToString(),
                 Email = email,
                 UserName = email
             };
@@ -155,6 +154,23 @@ namespace TweetBook.Services
             var userClaims = await this.userManager.GetClaimsAsync(user);
             claims.AddRange(userClaims);
             
+            var userRoles = await this.userManager.GetRolesAsync(user);
+            foreach (var userRole in userRoles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, userRole));
+                var role = await this.userManager.FindByNameAsync(userRole);
+                if(role == null) continue;
+                var roleClaims = await this.userManager.GetClaimsAsync(role);
+
+                foreach (var roleClaim in roleClaims)
+                {
+                    if(claims.Contains(roleClaim))
+                        continue;
+
+                    claims.Add(roleClaim);
+                }
+            }
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
