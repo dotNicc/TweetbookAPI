@@ -24,16 +24,14 @@ namespace TweetBook.Services
             return this.posts.SingleOrDefault(x => x.Id == postId);
         }
 
-        public Post Create(Guid postId, string userId, string name)
+        public Post Create(string name, List<string> tags, string userId)
         {
-            if (postId == Guid.Empty) 
-                postId = Guid.NewGuid();
-            
             var post = new Post
             {
-                Id = postId,
+                Id = Guid.NewGuid(),
                 Name = name,
-                UserId = userId
+                UserId = userId,
+                Tags = tags
             };
             
             this.posts.Add(post);
@@ -67,6 +65,17 @@ namespace TweetBook.Services
             var post = this.posts.SingleOrDefault(x => x.Id == postId);
 
             return post != null && post.UserId == userId;
+        }
+
+        public List<string> GetAllTags()
+        {
+            List<string> tags = new List<string>();
+            foreach (var post in this.posts.Where(x => x.Tags != null))
+            {
+                tags.AddRange(post.Tags);
+            }
+            
+            return tags;
         }
     }
 }

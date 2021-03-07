@@ -8,9 +8,10 @@ namespace TweetBook.Services
     {
         List<Post> GetPosts();
         Post GetPostById(Guid postId);
-        Post Create(Guid postId, string userId, string name);
+        Post Create(string name, List<string> tags, string userId);
         bool UpdatePost(Post postToUpdate);
         bool DeletePost(Guid postId);
         bool UserOwnsPost(Guid postId, string userId);
+        List<string> GetAllTags();
     }
 }

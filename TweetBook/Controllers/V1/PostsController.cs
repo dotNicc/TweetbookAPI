@@ -46,7 +46,7 @@ namespace TweetBook.Controllers.V1
 
             if (!userOwnsPost)
             {
-                return BadRequest(new {error = "You do now own this post."});
+                return BadRequest(new {error = "You do not own this post."});
             }
             
             Post post = this.postService.GetPostById(postId);
@@ -61,7 +61,7 @@ namespace TweetBook.Controllers.V1
         [HttpPost(ApiRoutes.Posts.Create)]
         public IActionResult Create([FromBody] CreatePostRequest postRequest)
         {
-            Post post = this.postService.Create(postRequest.Id, HttpContext.GetUserIdFromClaim(), postRequest.Name);
+            Post post = this.postService.Create(postRequest.Name, postRequest.Tags, HttpContext.GetUserIdFromClaim());
             string location = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}/{ApiRoutes.Posts.Get.Replace("{postId}", post.Id.ToString())}";
 
             var response = new PostResponse() {Id = post.Id};
