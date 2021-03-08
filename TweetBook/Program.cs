@@ -14,6 +14,7 @@ namespace TweetBook
     {
         private const string PosterEmail = "poster@gmail.com";
         private const string AdminEmail = "admin@gmail.com";
+        private const string OtherAdminEmail = "admin2@nico.com";
         private const string UserEmail = "user@gmail.com";
         
         public static async Task Main(string[] args)
@@ -41,6 +42,7 @@ namespace TweetBook
 
                 var userManager = serviceScope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
                 CreateDefaultUserIfMissing(userManager, AdminEmail, "Admin");
+                CreateDefaultUserIfMissing(userManager, OtherAdminEmail, "Admin");
                 CreateDefaultUserIfMissing(userManager, PosterEmail, "Poster");
                 CreateDefaultUserIfMissing(userManager, UserEmail);
                 

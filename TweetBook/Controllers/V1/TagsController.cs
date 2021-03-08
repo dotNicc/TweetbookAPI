@@ -25,7 +25,7 @@ namespace TweetBook.Controllers.V1
         }
 
         [HttpDelete(ApiRoutes.Tags.Delete)]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin", Policy = "MustWorkForNico")]
         public async Task<IActionResult> Delete([FromRoute] string tagName)
         {
             var deleted = this.postService.DeleteTag(tagName);

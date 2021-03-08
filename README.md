@@ -13,6 +13,7 @@ _https://www.youtube.com/playlist?list=PLUOequmGnXxOgmSDWU7Tl6iQTsOtyjtwU_
 ###Users
 * poster@gmail.com : Pass1234! (rôle de Poster)
 * admin@gmail.com : Pass1234! (rôle d'Admin)
+* admin2@nico.com : Pass1234! (rôle d'Admin, nécessaire pour le Delete de tags)
 * user@gmail.com : Pass1234! (pas de rôle)
 
 ## Sécurité

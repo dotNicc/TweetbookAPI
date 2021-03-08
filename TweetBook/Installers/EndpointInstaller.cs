@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using TweetBook.Authorization;
 using TweetBook.Options;
 using TweetBook.Services;
 
@@ -51,7 +53,13 @@ namespace TweetBook.Installers
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("TagViewer", builder => builder.RequireClaim("tags.view", "true"));
+                options.AddPolicy("MustWorkForNico", policy =>
+                {
+                    policy.AddRequirements(new WorksForCompanyRequirement("nico.com"));
+                });
             });
+            
+            services.AddSingleton<IAuthorizationHandler, WorksForCompanyHandler>();
             
             services.AddSwaggerGen(x =>
             {
