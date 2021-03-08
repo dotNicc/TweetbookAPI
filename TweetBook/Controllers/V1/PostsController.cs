@@ -1,4 +1,5 @@
 ﻿using System;
+using LanguageExt;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -31,12 +32,9 @@ namespace TweetBook.Controllers.V1
         [HttpGet(ApiRoutes.Posts.Get)]
         public IActionResult Get([FromRoute]Guid postId)
         {
-            Post post = this.postService.GetPostById(postId);
+            Option<Post> postOption = this.postService.GetPostById(postId);
 
-            if (post == null) 
-                return NotFound();
-            
-            return Ok(post);
+            return postOption.Match<IActionResult>(Ok, NotFound);
         }
         
         [HttpPut(ApiRoutes.Posts.Update)]
@@ -49,13 +47,16 @@ namespace TweetBook.Controllers.V1
                 return BadRequest(new {error = "You do not own this post."});
             }
             
-            Post post = this.postService.GetPostById(postId);
-            post.Name = request.Name;
-
-            if (this.postService.UpdatePost(post))
-                return Ok(post);
-            
-            return NotFound();
+            Option<Post> postOption = this.postService.GetPostById(postId);
+            return postOption.Match<IActionResult>(post =>
+                {
+                    post.Name = request.Name;
+                    if (this.postService.UpdatePost(post))
+                        return Ok(post);
+                    
+                    return NotFound();
+                },
+                NotFound);
         }
 
         [HttpPost(ApiRoutes.Posts.Create)]

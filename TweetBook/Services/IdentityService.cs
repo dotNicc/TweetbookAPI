@@ -158,10 +158,12 @@ namespace TweetBook.Services
             foreach (var userRole in userRoles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, userRole));
+                
                 var role = await this.userManager.FindByNameAsync(userRole);
-                if(role == null) continue;
+                if(role == null) 
+                    continue;
+                
                 var roleClaims = await this.userManager.GetClaimsAsync(role);
-
                 foreach (var roleClaim in roleClaims)
                 {
                     if(claims.Contains(roleClaim))

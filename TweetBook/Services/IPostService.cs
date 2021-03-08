@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using LanguageExt;
 using TweetBook.Domain;
 
 namespace TweetBook.Services
@@ -7,7 +8,7 @@ namespace TweetBook.Services
     public interface IPostService
     {
         List<Post> GetPosts();
-        Post GetPostById(Guid postId);
+        Option<Post> GetPostById(Guid postId);
         Post Create(string name, List<string> tags, string userId);
         bool UpdatePost(Post postToUpdate);
         bool DeletePost(Guid postId);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using LanguageExt;
 using TweetBook.Domain;
 
 namespace TweetBook.Services
@@ -19,7 +20,7 @@ namespace TweetBook.Services
             return this.posts;
         }
 
-        public Post GetPostById(Guid postId)
+        public Option<Post> GetPostById(Guid postId)
         {
             return this.posts.SingleOrDefault(x => x.Id == postId);
         }
@@ -41,23 +42,27 @@ namespace TweetBook.Services
 
         public bool UpdatePost(Post postToUpdate)
         {
-            if (GetPostById(postToUpdate.Id) == null) 
-                return false;
+            var postOption = GetPostById(postToUpdate.Id);
 
-            var index = this.posts.FindIndex(x => x.Id == postToUpdate.Id);
-            this.posts[index] = postToUpdate;
-            return true;
+            return postOption.Match(_ =>
+                {
+                    var index = this.posts.FindIndex(x => x.Id == postToUpdate.Id);
+                    this.posts[index] = postToUpdate;
+                    return true;
+                },
+                () => false);
         }
 
         public bool DeletePost(Guid postId)
         {
-            var post = GetPostById(postId);
-            
-            if (post == null) 
-                return false;
+            var postOption = GetPostById(postId);
 
-            this.posts.Remove(post);
-            return true;
+            return postOption.Match(post =>
+                {
+                    this.posts.Remove(post);
+                    return true;
+                },
+                () => false);
         }
 
         public bool UserOwnsPost(Guid postId, string userId)
