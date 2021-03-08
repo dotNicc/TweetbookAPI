@@ -31,3 +31,6 @@ _https://www.youtube.com/playlist?list=PLUOequmGnXxOgmSDWU7Tl6iQTsOtyjtwU_
 
 ## Docker
 * Dockerfile et docker-compose.yml pour rouler l'application dans un containers (localhost:7000/swagger)
+
+## Autres
+* Utilisation du Option<> de LanguageExtension.Core pour démontrer comment ne plus retourner d'objets null et forcer la validation de la réponse
