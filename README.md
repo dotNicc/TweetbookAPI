@@ -1,6 +1,6 @@
 # TweetbookAPI
 
-Code source pour la série de tutorial de Nick Chapsas avec certains ajouts et modification au goût du jour
+Code source largement inspiré par la série de tutorial de Nick Chapsas, avec plusieurs ajouts et modifications.
 
 _https://www.youtube.com/playlist?list=PLUOequmGnXxOgmSDWU7Tl6iQTsOtyjtwU_
 
