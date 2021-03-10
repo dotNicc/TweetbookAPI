@@ -17,16 +17,18 @@ namespace TweetBook.Services
     public class IdentityService : IIdentityService
     {
         private readonly UserManager<IdentityUser> userManager;
+        private readonly RoleManager<IdentityRole> roleManager;
         private readonly JwtSettings jwtSettings;
         private readonly TokenValidationParameters tokenValidationParameters;
         private readonly DataContext dataContext;
 
-        public IdentityService(UserManager<IdentityUser> userManager, JwtSettings jwtSettings, TokenValidationParameters tokenValidationParameters, DataContext dataContext)
+        public IdentityService(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, JwtSettings jwtSettings, TokenValidationParameters tokenValidationParameters, DataContext dataContext)
         {
             this.userManager = userManager;
             this.jwtSettings = jwtSettings;
             this.tokenValidationParameters = tokenValidationParameters;
             this.dataContext = dataContext;
+            this.roleManager = roleManager;
         }
         public async Task<AuthenticationResult> RegisterAsync(string email, string password)
         {
@@ -151,27 +153,19 @@ namespace TweetBook.Services
                 new("id", user.Id)
             };
 
-            var userClaims = await this.userManager.GetClaimsAsync(user);
-            claims.AddRange(userClaims);
+            claims.AddRange(await this.userManager.GetClaimsAsync(user));
             
-            var userRoles = await this.userManager.GetRolesAsync(user);
-            foreach (var userRole in userRoles)
+            (await this.userManager.GetRolesAsync(user)).ToList().ForEach(async userRole =>
             {
                 claims.Add(new Claim(ClaimTypes.Role, userRole));
                 
-                var role = await this.userManager.FindByNameAsync(userRole);
-                if(role == null) 
-                    continue;
+                IdentityRole role = await this.roleManager.FindByNameAsync(userRole);
+                if (role == null) 
+                    return;
                 
-                var roleClaims = await this.userManager.GetClaimsAsync(role);
-                foreach (var roleClaim in roleClaims)
-                {
-                    if(claims.Contains(roleClaim))
-                        continue;
-
-                    claims.Add(roleClaim);
-                }
-            }
+                IList<Claim> roleClaims = await this.roleManager.GetClaimsAsync(role);
+                claims.AddRange(roleClaims.ToList().Where(roleClaim => !claims.Contains(roleClaim)));
+            });
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {

@@ -32,6 +32,7 @@ namespace TweetBook
                 {
                     var adminRole = new IdentityRole("Admin");
                     await roleManager.CreateAsync(adminRole);
+                    await roleManager.AddClaimAsync(adminRole, new Claim("TestClaim", "MyClaim"));
                 }
                 
                 if (!await roleManager.RoleExistsAsync("Poster"))
@@ -45,7 +46,6 @@ namespace TweetBook
                 CreateDefaultUserIfMissing(userManager, OtherAdminEmail, "Admin");
                 CreateDefaultUserIfMissing(userManager, PosterEmail, "Poster");
                 CreateDefaultUserIfMissing(userManager, UserEmail);
-                
             }
 
             await host.RunAsync();
