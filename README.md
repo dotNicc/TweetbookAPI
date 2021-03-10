@@ -32,7 +32,8 @@ Utilisateurs par défaut créés dans la BD au démarrage:
 * Tests qui swap la BD SQLite par une BD en mémoire
 
 ## Docker
-* Dockerfile et docker-compose.yml pour compiler l'application et la rouler dans un container (localhost:7000/swagger)
+* Dockerfile et docker-compose.yml pour compiler l'application et la rouler dans un container (localhost:5001/swagger)
 
 ## Autres
 * Utilisation du Option<> de LanguageExtension.Core pour démontrer comment ne plus retourner d'objets null et forcer la validation de la réponse
+* Intégration dans le CI de GitHub avec les Action
