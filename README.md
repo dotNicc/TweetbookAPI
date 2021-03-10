@@ -10,7 +10,7 @@ _https://www.youtube.com/playlist?list=PLUOequmGnXxOgmSDWU7Tl6iQTsOtyjtwU_
 * Utilisation de Swashbuckle pour la documentation OAS3 avec Swagger
 * Bonnes pratiques pour l'injection de dépendance avec des "installers"
 
-###Users
+### Users
 Utilisateurs par défaut créés dans la BD au démarrage:
 * poster@gmail.com : Pass1234! (rôle de Poster)
 * admin@gmail.com : Pass1234! (rôle d'Admin)
