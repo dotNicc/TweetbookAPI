@@ -21,7 +21,7 @@ namespace TweetBook.Installers
 
             services.AddScoped<IIdentityService, IdentityService>();
             
-            services.AddControllersWithViews();
+            services.AddControllers();
 
             var tokenValidationParameters = new TokenValidationParameters
             {

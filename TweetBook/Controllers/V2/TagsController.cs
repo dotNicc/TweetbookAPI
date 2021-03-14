@@ -3,10 +3,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TweetBook.Contract.V1.Responses;
+using TweetBook.Contract.V2.Responses;
 using TweetBook.Services;
 
-namespace TweetBook.Controllers.V1
+namespace TweetBook.Controllers.V2
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Poster,Admin")]
     public class TagsController : Controller
@@ -17,24 +17,16 @@ namespace TweetBook.Controllers.V1
         {
             this.postService = postService;
         }
-
-        [HttpGet(Contract.V1.ApiRoutes.Tags.GetAll)]
+        
+        [HttpGet(Contract.V2.ApiRoutes.Tags.GetAll)]
         [Authorize(Policy = "TagViewer")]
         public async Task<IActionResult> GetAll()
         {
-            return Ok(this.postService.GetAllTags().Select(tag => new TagResponse {Name = tag.Name}));
-        }
-
-        [HttpDelete(Contract.V1.ApiRoutes.Tags.Delete)]
-        [Authorize(Roles = "Admin", Policy = "MustWorkForNico")]
-        public async Task<IActionResult> Delete([FromRoute] string tagName)
-        {
-            var deleted = this.postService.DeleteTag(tagName);
-
-            if (deleted)
-                return NoContent();
-
-            return NotFound();
+            return Ok(this.postService.GetAllTags().Select(tag => new TagResponse
+            {
+                Name = tag.Name,
+                TagType = tag.TagType
+            }));
         }
     }
 }

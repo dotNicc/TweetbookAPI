@@ -35,7 +35,8 @@ namespace TweetBook.Services
                 Tags = tags.Select(x => new Tag
                 {
                     Id = Guid.NewGuid(),
-                    Name = x
+                    Name = x,
+                    TagType = "Breaking change"
                 }).ToList()
             };
             
