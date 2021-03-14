@@ -32,7 +32,11 @@ namespace TweetBook.Services
                 Id = Guid.NewGuid(),
                 Name = name,
                 UserId = userId,
-                Tags = tags
+                Tags = tags.Select(x => new Tag
+                {
+                    Id = Guid.NewGuid(),
+                    Name = x
+                }).ToList()
             };
             
             this.posts.Add(post);
@@ -72,25 +76,30 @@ namespace TweetBook.Services
             return post != null && post.UserId == userId;
         }
 
-        public List<string> GetAllTags()
+        public List<Tag> GetAllTags()
         {
-            List<string> tags = new List<string>();
-            foreach (var post in this.posts.Where(x => x.Tags != null))
-            {
-                tags.AddRange(post.Tags);
-            }
+            List<Tag> tags = new List<Tag>();
             
+            tags.AddRange(this.posts
+                .Where(x => x.Tags != null)
+                .Select(x => x.Tags)
+                .Flatten());
+
             return tags;
         }
 
         public bool DeleteTag(string tagName)
         {
             bool found = false;
-            foreach (var post in this.posts.Where(x => x.Tags.Contains(tagName)))
+
+            this.posts
+                .ForEach(post => post.Tags
+                .Where(t => t.Name == tagName).ToList()
+                .ForEach(tag =>
             {
-                post.Tags.Remove(tagName);
+                post.Tags.Remove(tag);
                 found = true;
-            }
+            }));
 
             return found;
         }

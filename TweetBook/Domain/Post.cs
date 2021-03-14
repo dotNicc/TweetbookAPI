@@ -8,6 +8,6 @@ namespace TweetBook.Domain
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string UserId { get; set; }
-        public List<string> Tags { get; set; }
+        public List<Tag> Tags { get; set; }
     }
 }

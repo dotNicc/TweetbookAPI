@@ -13,7 +13,7 @@ namespace TweetBook.Services
         bool UpdatePost(Post postToUpdate);
         bool DeletePost(Guid postId);
         bool UserOwnsPost(Guid postId, string userId);
-        List<string> GetAllTags();
+        List<Tag> GetAllTags();
         bool DeleteTag(string tagName);
     }
 }
