@@ -1,8 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TweetBook.Contract.V1;
+using TweetBook.Contract.V1.Responses;
 using TweetBook.Services;
 
 namespace TweetBook.Controllers.V1
@@ -21,7 +23,7 @@ namespace TweetBook.Controllers.V1
         [Authorize(Policy = "TagViewer")]
         public async Task<IActionResult> GetAll()
         {
-            return Ok(this.postService.GetAllTags());
+            return Ok(this.postService.GetAllTags().Select(tag => new TagResponse {Name = tag.Name}));
         }
 
         [HttpDelete(ApiRoutes.Tags.Delete)]

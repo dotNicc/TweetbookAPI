@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using LanguageExt;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -12,7 +13,6 @@ using TweetBook.Services;
 
 namespace TweetBook.Controllers.V1
 {
-    
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class PostsController : Controller
     {
@@ -22,23 +22,40 @@ namespace TweetBook.Controllers.V1
         {
             this.postService = postService;
         }
-        
+
         [HttpGet(ApiRoutes.Posts.GetAll)]
         public IActionResult GetAll()
         {
-            return Ok(this.postService.GetPosts());
+            return Ok(this.postService
+                .GetPosts()
+                .Select(post => new PostResponse
+                {
+                    Id = post.Id,
+                    Name = post.Name,
+                    UserId = post.UserId,
+                    Tags = post.Tags.Select(p => new TagResponse {Name = p.Name})
+                }));
         }
-        
+
         [HttpGet(ApiRoutes.Posts.Get)]
-        public IActionResult Get([FromRoute]Guid postId)
+        public IActionResult Get([FromRoute] Guid postId)
         {
             Option<Post> postOption = this.postService.GetPostById(postId);
 
-            return postOption.Match<IActionResult>(Ok, NotFound);
+            return postOption.Match<IActionResult>(
+                post =>
+                    Ok(new PostResponse
+                    {
+                        Id = post.Id,
+                        Name = post.Name,
+                        UserId = post.UserId,
+                        Tags = post.Tags.Select(p => new TagResponse {Name = p.Name})
+                    }),
+                NotFound);
         }
-        
+
         [HttpPut(ApiRoutes.Posts.Update)]
-        public IActionResult Update([FromRoute]Guid postId, [FromBody] UpdatePostRequest request)
+        public IActionResult Update([FromRoute] Guid postId, [FromBody] UpdatePostRequest request)
         {
             bool userOwnsPost = this.postService.UserOwnsPost(postId, HttpContext.GetUserIdFromClaim());
 
@@ -46,14 +63,20 @@ namespace TweetBook.Controllers.V1
             {
                 return BadRequest(new {error = "You do not own this post."});
             }
-            
+
             Option<Post> postOption = this.postService.GetPostById(postId);
             return postOption.Match<IActionResult>(post =>
                 {
                     post.Name = request.Name;
                     if (this.postService.UpdatePost(post))
-                        return Ok(post);
-                    
+                        return Ok(new PostResponse
+                        {
+                            Id = post.Id,
+                            Name = post.Name,
+                            UserId = post.UserId,
+                            Tags = post.Tags.Select(p => new TagResponse {Name = p.Name})
+                        });
+
                     return NotFound();
                 },
                 NotFound);
@@ -65,12 +88,17 @@ namespace TweetBook.Controllers.V1
             Post post = this.postService.Create(postRequest.Name, postRequest.Tags, HttpContext.GetUserIdFromClaim());
             string location = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}/{ApiRoutes.Posts.Get.Replace("{postId}", post.Id.ToString())}";
 
-            var response = new PostResponse() {Id = post.Id};
-            return Created(location, response);
+            return Created(location, new PostResponse
+            {
+                Id = post.Id,
+                Name = post.Name,
+                UserId = post.UserId,
+                Tags = post.Tags.Select(p => new TagResponse {Name = p.Name})
+            });
         }
-        
+
         [HttpDelete(ApiRoutes.Posts.Delete)]
-        public IActionResult Delete([FromRoute]Guid postId)
+        public IActionResult Delete([FromRoute] Guid postId)
         {
             bool userOwnsPost = this.postService.UserOwnsPost(postId, HttpContext.GetUserIdFromClaim());
 
@@ -80,10 +108,10 @@ namespace TweetBook.Controllers.V1
             }
 
             bool deleted = this.postService.DeletePost(postId);
-            
-            if (deleted) 
+
+            if (deleted)
                 return NoContent();
-            
+
             return NotFound();
         }
     }
