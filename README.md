@@ -9,6 +9,8 @@ _https://www.youtube.com/playlist?list=PLUOequmGnXxOgmSDWU7Tl6iQTsOtyjtwU_
 * Bonnes pratiques pour le versioning des routes
 * Utilisation de Swashbuckle pour la documentation OAS3 avec Swagger
 * Bonnes pratiques pour l'injection de dépendance avec des "installers"
+* Exemple de bonnes pratiques de versioning
+* Exemple de bonnes pratiques de découplage entre le domaine et les controllers
 
 ### Users
 Utilisateurs par défaut créés dans la BD au démarrage:
