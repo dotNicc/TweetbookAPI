@@ -93,7 +93,7 @@ namespace TweetBook.Controllers.V1
                 Id = post.Id,
                 Name = post.Name,
                 UserId = post.UserId,
-                Tags = post.Tags.Select(p => new TagResponse {Name = p.Name})
+                Tags = post.Tags.Select(p => new TagResponse {Name = p.Name}).ToList()
             });
         }
 

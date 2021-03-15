@@ -32,12 +32,13 @@ namespace TweetBook.Services
                 Id = Guid.NewGuid(),
                 Name = name,
                 UserId = userId,
-                Tags = tags.Select(x => new Tag
-                {
-                    Id = Guid.NewGuid(),
-                    Name = x,
-                    TagType = "Breaking change"
-                }).ToList()
+                Tags = tags != null ? tags.Select(x => new Tag
+                    {
+                        Id = Guid.NewGuid(),
+                        Name = x,
+                        TagType = "Breaking change"
+                    }).ToList() 
+                    : new List<Tag>()
             };
             
             this.posts.Add(post);
