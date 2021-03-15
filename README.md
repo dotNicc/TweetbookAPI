@@ -6,10 +6,9 @@ _https://www.youtube.com/playlist?list=PLUOequmGnXxOgmSDWU7Tl6iQTsOtyjtwU_
 
 ## API REST
 * API REST de base avec un GET/POST/UPDATE/DELETE en exemple
-* Bonnes pratiques pour le versioning des routes
+* Bonnes pratiques pour le versioning des routes (avec un exemple de v2)
 * Utilisation de Swashbuckle pour la documentation OAS3 avec Swagger
 * Bonnes pratiques pour l'injection de dépendance avec des "installers"
-* Exemple de bonnes pratiques de versioning
 * Exemple de bonnes pratiques de découplage entre le domaine et les controllers
 
 ### Users
@@ -39,3 +38,7 @@ Utilisateurs par défaut créés dans la BD au démarrage:
 ## Autres
 * Utilisation du Option<> de LanguageExtension.Core pour démontrer comment ne plus retourner d'objets null et forcer la validation de la réponse
 * Intégration dans le CI de GitHub avec les Action
+
+## TODO
+* Mapster pour la génération de code des DTOs
+* MediatR pour découpler les services des controllers
